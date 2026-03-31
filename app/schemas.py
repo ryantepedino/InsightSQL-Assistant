@@ -1,20 +1,17 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
-class SalesRecordBase(BaseModel):
-    region: str
+class SaleBase(BaseModel):
     product: str
-    category: str
-    sales_amount: float
-    sales_month: str
+    region: str
+    amount: float
 
 
-class SalesRecordCreate(SalesRecordBase):
+class SaleCreate(SaleBase):
     pass
 
 
-class SalesRecordResponse(SalesRecordBase):
+class SaleResponse(SaleBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

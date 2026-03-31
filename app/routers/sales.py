@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy import func
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
-from app import models, schemas
+from app.models import Sale
+from app.schemas import SaleCreate, SaleResponse
+from app.services.analytics import get_sales_summary
 
-router = APIRouter(prefix="/sales", tags=["sales"])
+sales_router = APIRouter()
 
 
 def get_db():
@@ -16,54 +17,34 @@ def get_db():
         db.close()
 
 
-@router.get("")
-def list_sales(db: Session = Depends(get_db)):
-    sales = db.query(models.SalesRecord).all()
-
-    return {
-        "total_records": len(sales),
-        "data": sales
-    }
+@sales_router.get("/sales", response_model=list[SaleResponse])
+def get_sales(db: Session = Depends(get_db)):
+    return db.query(Sale).all()
 
 
-@router.get("/region/{region_name}")
-def list_sales_by_region(region_name: str, db: Session = Depends(get_db)):
-    sales = db.query(models.SalesRecord).filter(
-        models.SalesRecord.region == region_name
-    ).all()
-
-    return {
-        "region": region_name,
-        "total_records": len(sales),
-        "data": sales
-    }
-
-
-@router.get("/summary")
-def sales_summary(db: Session = Depends(get_db)):
-    total_records = db.query(models.SalesRecord).count()
-    total_sales = db.query(
-        func.coalesce(func.sum(models.SalesRecord.sales_amount), 0)
-    ).scalar()
-
-    return {
-        "total_records": total_records,
-        "total_sales_amount": total_sales
-    }
-
-
-@router.post("", response_model=schemas.SalesRecordResponse)
-def create_sale(sale: schemas.SalesRecordCreate, db: Session = Depends(get_db)):
-    new_sale = models.SalesRecord(
-        region=sale.region,
+@sales_router.post("/sales", response_model=SaleResponse)
+def create_sale(sale: SaleCreate, db: Session = Depends(get_db)):
+    new_sale = Sale(
         product=sale.product,
-        category=sale.category,
-        sales_amount=sale.sales_amount,
-        sales_month=sale.sales_month
+        region=sale.region,
+        amount=sale.amount
     )
-
     db.add(new_sale)
     db.commit()
     db.refresh(new_sale)
-
     return new_sale
+
+
+@sales_router.get("/sales/region/{region_name}", response_model=list[SaleResponse])
+def get_sales_by_region(region_name: str, db: Session = Depends(get_db)):
+    sales = db.query(Sale).filter(Sale.region.ilike(region_name)).all()
+
+    if not sales:
+        raise HTTPException(status_code=404, detail="Nenhuma venda encontrada para essa região.")
+
+    return sales
+
+
+@sales_router.get("/sales/summary")
+def sales_summary(db: Session = Depends(get_db)):
+    return get_sales_summary(db)

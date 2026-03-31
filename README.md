@@ -24,7 +24,7 @@ O projeto foi criado como portfólio para demonstrar habilidades em:
 - Banco SQLite local
 - Seed automático com dados de exemplo
 - Swagger UI para testes
-
+- Insights de vendas por região
 ## Tecnologias
 
 - Python
@@ -42,7 +42,7 @@ O projeto foi criado como portfólio para demonstrar habilidades em:
 - `POST /sales`
 - `GET /sales/region/{region_name}`
 - `GET /sales/summary`
-
+- `GET /sales/insights/regions`
 ## Como executar
 
 ```bash

@@ -3,7 +3,9 @@
 API backend desenvolvida com Python e FastAPI para simular um assistente de BI conversacional com foco em consultas analíticas sobre vendas.
 
 ## Objetivo
+
 O projeto foi criado como portfólio para demonstrar habilidades em:
+
 - desenvolvimento backend com Python
 - construção de APIs com FastAPI
 - modelagem de dados com SQLAlchemy
@@ -11,8 +13,10 @@ O projeto foi criado como portfólio para demonstrar habilidades em:
 - organização modular de rotas
 - documentação automática com Swagger
 - seed automático de dados para demonstração
+- separação de lógica analítica em camada de serviço
 
 ## Funcionalidades atuais
+
 - Listagem de vendas
 - Cadastro de vendas
 - Filtro de vendas por região
@@ -22,6 +26,7 @@ O projeto foi criado como portfólio para demonstrar habilidades em:
 - Swagger UI para testes
 
 ## Tecnologias
+
 - Python
 - FastAPI
 - SQLAlchemy
@@ -30,6 +35,7 @@ O projeto foi criado como portfólio para demonstrar habilidades em:
 - Pydantic
 
 ## Rotas principais
+
 - `GET /`
 - `GET /health`
 - `GET /sales`
@@ -38,6 +44,7 @@ O projeto foi criado como portfólio para demonstrar habilidades em:
 - `GET /sales/summary`
 
 ## Como executar
+
 ```bash
 cd ~/Área\ de\ trabalho/InsightSQL-Assistant
 source .venv/bin/activate
@@ -50,11 +57,14 @@ Após subir o servidor, acesse:
 http://127.0.0.1:8000/docs
 
 Estrutura do projeto
-
 InsightSQL-Assistant/
 ├── app/
 │   ├── routers/
+│   │   ├── __init__.py
 │   │   └── sales.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── analytics.py
 │   ├── __init__.py
 │   ├── database.py
 │   ├── models.py
@@ -66,9 +76,3 @@ InsightSQL-Assistant/
 ├── requirements.txt
 ├── README.md
 └── .gitignore
-
-Status
-
-Em desenvolvimento.
-
-
